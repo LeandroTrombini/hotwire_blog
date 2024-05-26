@@ -58,14 +58,25 @@ class ArticlesController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_article
-      @article = current_user.articles.find(params[:id])
+  def like
+    @article = Article.find(params[:id])
+    @like = @article.likes.where(user: current_user)
+    if @like.any?
+      @like.first.destroy
+    else
+      @article.likes.create(user: current_user)
     end
+  end
 
-    # Only allow a list of trusted parameters through.
-    def article_params
-      params.require(:article).permit(:title, :content)
-    end
+  private 
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_article
+    @article = current_user.articles.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def article_params
+    params.require(:article).permit(:title, :content)
+  end
 end
